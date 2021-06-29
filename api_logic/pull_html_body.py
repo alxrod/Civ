@@ -4,9 +4,29 @@ from urllib.request import Request, urlopen
 
 from readability import Document
 import requests
+import signal
+import threading
+import sys
+from wrapt_timeout_decorator import *
+
+
+@timeout(3)
+def send_request(url):
+	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',}
+	try:
+		return requests.get(url, headers=headers)
+	except requests.exceptions.Timeout as err:
+		print(err)
+
 
 def pull_body(url):
-	response = requests.get(url)
+	response = None
+	try:
+		response = send_request(url)
+	except:
+		print("request timed out")
+	if response == None:
+		return "FAILED REQUEST"
 	doc = Document(response.text)
 
 	text = doc.summary()

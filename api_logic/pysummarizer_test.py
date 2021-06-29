@@ -20,8 +20,10 @@ def sum_text(text):
     # Output 3 summarized sentences.
     limit = 5
     i = 1
+    summary = []
     for sentence in result_dict["summarize_result"]:
-        print(sentence)
+        summary.append(sentence)
         if i >= limit:
             break
         i += 1
+    return " ".join(summary)

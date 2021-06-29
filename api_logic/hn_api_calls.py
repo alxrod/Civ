@@ -5,6 +5,8 @@ from operator import itemgetter
 from pull_html_body import pull_body
 from pysummarizer_test import sum_text
 
+from sync_w_api import get_articles, post_article
+
 from pysummarization.nlpbase.auto_abstractor import AutoAbstractor
 from pysummarization.tokenizabledoc.simple_tokenizer import SimpleTokenizer
 from pysummarization.abstractabledoc.top_n_rank_abstractor import TopNRankAbstractor
@@ -28,7 +30,7 @@ def get_top_stories(depth=10):
 		one_article = article_r.json()
 		if "url" in one_article.keys():
 			article_dict = {
-				"Title": one_article["title"],
+				"title": one_article["title"],
 				"url": one_article["url"]
 			}
 
@@ -40,6 +42,28 @@ def get_top_stories(depth=10):
 
 
 if __name__ == '__main__':
-	articles = get_top_stories(5)
-	text = pull_body(articles[1]["url"])
-	sum_text(text)
+	articles = get_top_stories(15)
+	existing_articles = get_articles()
+	existing_titles = []
+
+	for art in existing_articles:
+		existing_titles.append(art["title"])
+
+
+	for article in articles:
+		if article["title"] not in existing_titles:
+
+			print("\n"+article["title"])
+			print("-------------------------------------")
+			text = pull_body(article["url"])
+			if text == "FAILED REQUEST":
+				continue
+			summary = sum_text(text)
+			
+			post_article(
+				article["title"],
+				article["url"],
+				summary,
+				text
+			)
+

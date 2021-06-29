@@ -1,0 +1,5 @@
+https://towardsdatascience.com/multi-class-text-classification-with-doc2vec-logistic-regression-9da9947b43f4
+
+https://realpython.com/pysimplegui-python/
+
+https://pypi.org/project/browserhistory/
