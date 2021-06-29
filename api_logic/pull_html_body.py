@@ -25,7 +25,6 @@ def pull_body(url):
 		response = send_request(url)
 	except:
 		print("request timed out")
-	if response == None:
 		return "FAILED REQUEST"
 	doc = Document(response.text)
 

@@ -1,5 +1,7 @@
 import requests
 
+import time
+
 from operator import itemgetter
 
 from pull_html_body import pull_body
@@ -42,28 +44,36 @@ def get_top_stories(depth=10):
 
 
 if __name__ == '__main__':
-	articles = get_top_stories(15)
-	existing_articles = get_articles()
-	existing_titles = []
+	while True:
+		print("Making database population run")
+		articles = get_top_stories(100)
+		existing_articles = get_articles()
+		existing_titles = []
 
-	for art in existing_articles:
-		existing_titles.append(art["title"])
+		for art in existing_articles:
+			existing_titles.append(art["title"])
 
 
-	for article in articles:
-		if article["title"] not in existing_titles:
+		for article in articles:
+			print("Reviewing article")
+			if article["title"] not in existing_titles:
 
-			print("\n"+article["title"])
-			print("-------------------------------------")
-			text = pull_body(article["url"])
-			if text == "FAILED REQUEST":
-				continue
-			summary = sum_text(text)
+				print("\n"+article["title"])
+				print("-------------------------------------")
+				text = pull_body(article["url"])
+				if text != "FAILED REQUEST":
+					summary = sum_text(text)
 			
-			post_article(
-				article["title"],
-				article["url"],
-				summary,
-				text
-			)
+					post_article(
+						article["title"],
+						article["url"],
+						summary,
+						text
+					)
+				else:
+					print("Failed summary")
+
+		print("Sleeping before rechecking")	
+		time.sleep(60)
+
 
