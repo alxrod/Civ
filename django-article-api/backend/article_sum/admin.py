@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Article
 
 class ArticleAdmin(admin.ModelAdmin):
-	list_display = ("title", "summary", "complete", "url")
+	list_display = ("title", "summary", "complete", "url", "category")
 
 # Register your models here.
 admin.site.register(Article, ArticleAdmin)
