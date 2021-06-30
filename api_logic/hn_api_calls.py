@@ -7,7 +7,7 @@ from operator import itemgetter
 from pull_html_body import pull_body
 from pysummarizer_test import sum_text
 
-from sync_w_api import get_articles, post_article
+from sync_w_api import get_articles, post_article, update_article
 
 from pysummarization.nlpbase.auto_abstractor import AutoAbstractor
 from pysummarization.tokenizabledoc.simple_tokenizer import SimpleTokenizer
@@ -50,12 +50,33 @@ if __name__ == '__main__':
 		existing_articles = get_articles()
 		existing_titles = []
 
+		hn_articles_dict = {}
+		count = 0 
+		for art in articles:
+			art["rank"] = count
+			hn_articles_dict[art["title"]] = art
+			count+=1
+
+		db_articles_dict = {}
+		for art in existing_articles:
+			db_articles_dict[art["title"]] = art
+
 		for art in existing_articles:
 			existing_titles.append(art["title"])
 
+		for title, art in db_articles_dict.items():
+			if title in hn_articles_dict.keys():
+				print("Article exists, updating")
+				art["hn_rank"] = hn_articles_dict[title]["rank"]
+			else:
+				print("Article is not in top 100")
+				art["hn_rank"] = -1
+
+			update_article(art, art["id"])
+
+
 
 		for article in articles:
-			print("Reviewing article")
 			if article["title"] not in existing_titles:
 
 				print("\n"+article["title"])

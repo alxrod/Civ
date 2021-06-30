@@ -8,7 +8,8 @@ class Article(models.Model):
 	summary = models.TextField()
 	complete = models.TextField()
 	url = models.TextField()
-	category = models.IntegerField(default = random.randint(1, 10))
+	category = models.IntegerField(default = 0)
+	hn_rank = models.IntegerField(default=0)
 
 	def _str_(self):
 		return self.title

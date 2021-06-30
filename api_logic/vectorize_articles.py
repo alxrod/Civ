@@ -1,4 +1,4 @@
-from sync_w_api import get_articles
+from sync_w_api import get_articles, update_article
 import pickle 
 import pandas as pd
 import numpy
@@ -15,7 +15,7 @@ def preprocess(df):
 	all_content_train = []
 	j=0
 
-	for em in df["complete"].values:
+	for em in df["summary"].values:
 		all_content_train.append(LabeledSentence1(em,[j]))
 		j+=1
 	print("Processed " + str(j) + " texts")
@@ -28,7 +28,7 @@ def define_doc2vec(all_content_train):
 	return d2v_model
 
 def kmean_cluster(d2v_model):
-	kmeans_model = KMeans(n_clusters=4, init="k-means++",max_iter=100)
+	kmeans_model = KMeans(n_clusters=10, init="k-means++",max_iter=100)
 	X = kmeans_model.fit(d2v_model.dv.get_normed_vectors())
 	labels = kmeans_model.labels_.tolist()
 	
@@ -42,6 +42,10 @@ article_df = pd.DataFrame(articles)
 all_content_train = preprocess(article_df)
 d2v_model = define_doc2vec(all_content_train)
 labels, l = kmean_cluster(d2v_model)
-print(labels)
-print(l)
+a_index = 0
 
+print("Updating articles with classified categories in the DB")
+for a in articles:
+	a["category"] = labels[a_index]+1
+	update_article(a,a["id"])
+	a_index+=1

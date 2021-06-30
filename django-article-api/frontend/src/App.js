@@ -7,6 +7,7 @@ class App extends Component {
     this.state = {
       articleList: [],
       curArtIndex: 0,
+      queryState: "TOP",
     };
   }
 
@@ -22,14 +23,37 @@ class App extends Component {
   };
 
   getCategoryColor = (id) => {
-    let colors = ["#fe4a49","#fe4a49","#fe4a49","#2ab7ca","#2ab7ca","#fed766","#fed766","#e6e6ea","#e6e6ea","#e6e6ea"]
+    let colors = ["#e6e6ea","#fe4a49","#2ab7ca","#FF9900","#7952B3","#2541B2","#FF7600","#FF005C","#064420","#D62AD0","#480032"]
     console.log(id)
     return colors[id]
   }
 
+  compareArticles(art1, art2) {
+    if (art1.hn_rank == -1) {
+      return 1
+    }
+
+    if (art2.hn_rank == -1) {
+      return -1
+    }
+    if (art1.hn_rank < art2.hn_rank) {
+      return -1
+    }
+    if (art1.hn_rank > art2.hn_rank) {
+      return 1
+    }
+    return 0
+  }
+
+  getArticles = () => {
+
+  }
+
   renderItems = () => {
 
-    return this.state.articleList.map((item, index) => (
+    return this.state.articleList.sort((art1, art2) => {
+        return this.compareArticles(art1, art2)
+    }).map((item, index) => (
       <div
         key={item.id}
         className="card d-flex justify-content-between p-2 mb-2"

@@ -17,3 +17,6 @@ def post_article(title,url,summary,complete):
 
 	r = requests.post(root+"api/articles/", article)
 	print(r)
+
+def update_article(article,id):
+	r = requests.put(root+"api/articles/"+str(id)+"/",article)
